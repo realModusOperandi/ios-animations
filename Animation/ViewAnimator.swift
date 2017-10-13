@@ -18,9 +18,9 @@ class ViewAnimator: NSObject {
         CATransaction.setAnimationTimingFunction(easingFunction)
     
         let anim: CABasicAnimation = CABasicAnimation(keyPath: "transform")
-        anim.fromValue = NSValue(CATransform3D: view.layer.transform)
-        anim.toValue   = NSValue(CATransform3D: transform)
-        view.layer.addAnimation(anim, forKey: "animateTransform")
+        anim.fromValue = NSValue(caTransform3D: view.layer.transform)
+        anim.toValue   = NSValue(caTransform3D: transform)
+        view.layer.add(anim, forKey: "animateTransform")
     
         CATransaction.setCompletionBlock {
             view.layer.transform = transform

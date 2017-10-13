@@ -8,21 +8,21 @@ This licensed material is licensed under the Apache 2.0 license. http://www.apac
 
 class DropdownAppearTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
    
-    func transitionDuration(transitionContext: UIViewControllerContextTransitioning) -> NSTimeInterval {
+    func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         return 0.8
     }
     
-    func animateTransition(transitionContext: UIViewControllerContextTransitioning) {
+    func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
         
-        let to = transitionContext.viewControllerForKey(UITransitionContextToViewControllerKey) as! DropdownViewController
+        let to = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to) as! DropdownViewController
         
-        let container = transitionContext.containerView()
-        let duration = transitionDuration(transitionContext)
+        let container = transitionContext.containerView
+        _ = transitionDuration(using: transitionContext)
         
         container.addSubview(to.view)
         
         to.show() {
-            transitionContext.completeTransition(!transitionContext.transitionWasCancelled())
+            transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
         }
         
     }

@@ -36,7 +36,7 @@ class ModalViewController: UIViewController, UITableViewDelegate {
     
     // MARK: - Constants, Properties
     
-    var modalPressed: ((index: Int) -> Void)?
+    var modalPressed: ((_ index: Int) -> Void)?
     
     let animationMultiplier : CGFloat = 1
     let maxModalHeadHeight: CGFloat = 80
@@ -47,14 +47,14 @@ class ModalViewController: UIViewController, UITableViewDelegate {
         super.viewDidLoad()
         
         modalHeadHeight.constant = modalHead.bounds.size.height
-        modalBackgroundTop.constant = UIScreen.mainScreen().bounds.size.height - 50
+        modalBackgroundTop.constant = UIScreen.main.bounds.size.height - 50
         
         self.pdfView.alpha = 0
         
         loader.animationImages = [UIImage]()
         
-        for var index = 100; index < 147; index++ {
-            var frameName = String(format: "Loader_00%03d", index)
+        for index in 100..<147 {
+            let frameName = String(format: "Loader_00%03d", index)
             loader.animationImages?.append(UIImage(named:frameName)!)
         }
         
@@ -67,7 +67,7 @@ class ModalViewController: UIViewController, UITableViewDelegate {
     // MARK: - Scroll View
     
     // header shrinks and its elements resize based on scroll position
-    func scrollViewDidScroll(scrollView: UIScrollView) {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
         // update views based on scroll offset
         
         let scrollOffset = scrollView.contentOffset.y
@@ -83,11 +83,11 @@ class ModalViewController: UIViewController, UITableViewDelegate {
         if (scrollOffset < 0) {
             // at top
             // set to max position
-            self.menuLabel.transform = CGAffineTransformIdentity
+            self.menuLabel.transform = CGAffineTransform.identity
             self.buttonImageView.alpha = 1
-            self.closeButton.enabled = true
+            self.closeButton.isEnabled = true
             
-            UIView.animateWithDuration(0.1, animations: {
+            UIView.animate(withDuration: 0.1, animations: {
                 self.modalHeadHeight.constant = 80
                 self.view.layoutIfNeeded()
             })
@@ -96,11 +96,11 @@ class ModalViewController: UIViewController, UITableViewDelegate {
             // proportionally adjust the header and it's children
             if scrollOffset < maxScrollOffset {
                 self.buttonImageView.alpha = scalePercent
-                self.closeButton.enabled = true
-                self.menuLabel.transform = CGAffineTransformMakeScale(labelEndPercent, labelEndPercent)
-                self.buttonImageView.transform = CGAffineTransformMakeScale(labelEndPercent, labelEndPercent)
+                self.closeButton.isEnabled = true
+                self.menuLabel.transform = CGAffineTransform(scaleX: labelEndPercent, y: labelEndPercent)
+                self.buttonImageView.transform = CGAffineTransform(scaleX: labelEndPercent, y: labelEndPercent)
                 
-                UIView.animateWithDuration(0.1, animations: {
+                UIView.animate(withDuration: 0.1, animations: {
                     self.modalHeadHeight.constant = (80 - scrollOffset)
                     self.view.layoutIfNeeded()
                 })
@@ -108,10 +108,10 @@ class ModalViewController: UIViewController, UITableViewDelegate {
                 // scrolled beyond minimun
                 // set to min position
                 self.buttonImageView.alpha = 0
-                self.closeButton.enabled = false
-                self.menuLabel.transform = CGAffineTransformMakeScale((self.modalHead.bounds.height / maxModalHeadHeight) + 0.15, (self.modalHead.bounds.height / maxModalHeadHeight) + 0.2)
+                self.closeButton.isEnabled = false
+                self.menuLabel.transform = CGAffineTransform(scaleX: (self.modalHead.bounds.height / maxModalHeadHeight) + 0.15, y: (self.modalHead.bounds.height / maxModalHeadHeight) + 0.2)
                 
-                UIView.animateWithDuration(0.1, animations: {
+                UIView.animate(withDuration: 0.1, animations: {
                     self.modalHeadHeight.constant = 40
                     self.view.layoutIfNeeded()
                 })
@@ -121,35 +121,35 @@ class ModalViewController: UIViewController, UITableViewDelegate {
     
     // MARK: - Transition Animations
     
-    func show(completion: () -> Void ) {
+    func show(completion: @escaping () -> Void ) {
     
-        var animationDuration = Double(self.animationMultiplier) * 1 / 3.0;
+        let animationDuration = Double(self.animationMultiplier) * 1 / 3.0;
         
         backgroundView.alpha = 0
         loaderBG.alpha = 1
         loader.alpha = 1
         
-        UIView.animateWithDuration(animationDuration, animations: { () -> Void in
+        UIView.animate(withDuration: animationDuration, animations: { () -> Void in
             
             self.backgroundView.alpha = 1
         }, completion: { finished in
             // display PDF
             // first string value is pdf file name
-            var pdfLoc = NSURL(fileURLWithPath:NSBundle.mainBundle().pathForResource("Bee", ofType:"pdf")!)
-            var request = NSURLRequest(URL: pdfLoc!);
-            self.pdfView.loadRequest(request);
+            let pdfLoc = NSURL(fileURLWithPath:Bundle.main.path(forResource: "Bee", ofType:"pdf")!)
+            let request = NSURLRequest(url: pdfLoc as URL);
+            self.pdfView.loadRequest(request as URLRequest);
             self.pdfView.alpha = 0
-            self.pdfView.transform = CGAffineTransformMakeScale(0.75, 0.75)
+            self.pdfView.transform = CGAffineTransform(scaleX: 0.75, y: 0.75)
             
             // show PDF
-            UIView.animateWithDuration(animationDuration, delay: 1.5, options: nil, animations: { () -> Void in
+            UIView.animate(withDuration: animationDuration, delay: 1.5, options: [], animations: { () -> Void in
                     self.loader.alpha = 0 // fade out loader
                 }, completion: { finished in
-                    UIView.animateWithDuration(0.25, delay: 0, options: nil, animations: { () -> Void in
+                    UIView.animate(withDuration: 0.25, delay: 0, options: [], animations: { () -> Void in
                             // fade in PDF
                             self.loaderBG.alpha = 0
                             self.pdfView.alpha = 1
-                            self.pdfView.transform = CGAffineTransformIdentity
+                            self.pdfView.transform = CGAffineTransform.identity
                         }, completion: { finished in
                             
                     })
@@ -157,41 +157,41 @@ class ModalViewController: UIViewController, UITableViewDelegate {
             
         })
         
-        var timer = LayoutConstraintAnimator(constraint: self.modalBackgroundTop, delay: 0, duration: animationDuration, toConstant: CGFloat(0), easing: LayoutConstraintEasing.Bezier(x1: 0.5, y1: 0.08, x2: 0.0, y2: 1.0), completion: completion)
+        _ = LayoutConstraintAnimator(constraint: self.modalBackgroundTop, delay: 0, duration: animationDuration, toConstant: CGFloat(0), easing: LayoutConstraintEasing.Bezier(x1: 0.5, y1: 0.08, x2: 0.0, y2: 1.0), completion: completion)
     }
     
-    func hide(completion: () -> Void ) {
+    func hide(completion: @escaping () -> Void ) {
         
-        var animationDuration = Double(self.animationMultiplier) * 1 / 4.0;
+        let animationDuration = Double(self.animationMultiplier) * 1 / 4.0;
         
         self.view.layoutIfNeeded()
         
-        UIView.animateWithDuration(animationDuration, animations: { () -> Void in
+        UIView.animate(withDuration: animationDuration, animations: { () -> Void in
             self.backgroundView.alpha = 0
         })
         
-        var timer = LayoutConstraintAnimator(constraint: self.modalBackgroundTop, delay: 0, duration: animationDuration, toConstant: (UIScreen.mainScreen().bounds.size.height + 10), easing: LayoutConstraintEasing.Bezier(x1: 0.5, y1: 0.08, x2: 0.0, y2: 1.0)) { finished in
+        _ = LayoutConstraintAnimator(constraint: self.modalBackgroundTop, delay: 0, duration: animationDuration, toConstant: (UIScreen.main.bounds.size.height + 100), easing: LayoutConstraintEasing.Bezier(x1: 0.5, y1: 0.08, x2: 0.0, y2: 1.0)) {
             
-            self.modalPressed?(index:0)
+            self.modalPressed?(0)
             completion()
         }
     }
     
     // MARK: - Actions
     
-    @IBAction func hideAction(sender: AnyObject) {
-        closeButton.hidden = true
-        dismissViewControllerAnimated(true, completion: nil)
+    @IBAction func hideAction(_ sender: AnyObject) {
+        closeButton.isHidden = true
+        dismiss(animated: true, completion: nil)
     }
     
     // MARK: - Appearance
     
-    override func prefersStatusBarHidden() -> Bool {
+    override var prefersStatusBarHidden: Bool {
         return false
     }
 
-    override func preferredStatusBarStyle() -> UIStatusBarStyle {
-        return UIStatusBarStyle.LightContent
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return UIStatusBarStyle.lightContent
     }
     
 }

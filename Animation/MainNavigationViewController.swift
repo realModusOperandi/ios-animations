@@ -15,20 +15,20 @@ class MainNavigationViewController: UINavigationController {
 
     // MARK: - Lifecycle
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         // Create a long press recognizer that requires two fingers and reverts the navigation back to the
         // main menu.
-        var longPressRecognizer = UILongPressGestureRecognizer(target: self, action: Selector("longPress:"))
+        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(MainNavigationViewController.longPress(_:)))
         longPressRecognizer.numberOfTouchesRequired = 2
         view.addGestureRecognizer(longPressRecognizer)
     }
     
     // MARK: - Flow
     
-    func longPress(longPress: UILongPressGestureRecognizer) {
-        popToRootViewControllerAnimated(true)
+    @objc func longPress(_ longPress: UILongPressGestureRecognizer) {
+        _ = popToRootViewController(animated: true)
     }
     
 }

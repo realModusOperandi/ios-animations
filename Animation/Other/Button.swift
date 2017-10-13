@@ -10,7 +10,7 @@ class Button: UIButton {
 
     override func awakeFromNib() {
         super.awakeFromNib()
-        setTitleColor(MotionStyleKit.motion_Color, forState: .Normal)
+        setTitleColor(MotionStyleKit.motion_Color, for: [])
     }
 
 }

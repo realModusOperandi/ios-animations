@@ -15,7 +15,7 @@ This licensed material is licensed under the Apache 2.0 license. http://www.apac
 
 class LayoutConstraintAnimator: NSObject {
     
-    internal lazy var link: CADisplayLink = CADisplayLink(target: self, selector: Selector("timer"))
+    internal lazy var link: CADisplayLink = CADisplayLink(target: self, selector: #selector(LayoutConstraintAnimator.timer))
     internal var startTime: Double
     internal var fromConstants: [CGFloat]
     internal var delaying: Bool
@@ -31,8 +31,8 @@ class LayoutConstraintAnimator: NSObject {
     Convenience constructor for the animation. Simply wraps the constraint and
     toConstant in an array for the main constructor.
     */
-    convenience init(constraint: NSLayoutConstraint, delay:NSTimeInterval,
-        duration:NSTimeInterval, toConstant:CGFloat, easing: LayoutConstraintEasing,
+    convenience init(constraint: NSLayoutConstraint, delay:TimeInterval,
+                     duration:TimeInterval, toConstant:CGFloat, easing: LayoutConstraintEasing,
         completion: (() -> Void)?) {
     
         self.init(
@@ -52,8 +52,8 @@ class LayoutConstraintAnimator: NSObject {
     :param: easing The easing algorithm to be used when calculating the target's values
     :param: completion The block to be performed on completion of the animation
     */
-    required init(constraints: [NSLayoutConstraint], delay:NSTimeInterval,
-        duration:NSTimeInterval, toConstants:[CGFloat], easing: LayoutConstraintEasing,
+    required init(constraints: [NSLayoutConstraint], delay:TimeInterval,
+                  duration:TimeInterval, toConstants:[CGFloat], easing: LayoutConstraintEasing,
         completion: (() -> Void)?) {
         
         self.constraints = constraints
@@ -73,10 +73,10 @@ class LayoutConstraintAnimator: NSObject {
         
         super.init()
         
-        self.link.addToRunLoop(NSRunLoop.mainRunLoop(), forMode: NSRunLoopCommonModes)
+        self.link.add(to: RunLoop.main, forMode: RunLoopMode.commonModes)
     }
     
-    internal func timer() {
+    @objc internal func timer() {
         // checks to see if we should continue delaying or process the animation
         if delaying {
             if (CACurrentMediaTime() - startTime) >= delay {
@@ -87,16 +87,16 @@ class LayoutConstraintAnimator: NSObject {
             }
         }
         
-        var time = CGFloat((CACurrentMediaTime() - startTime) / duration)
+        let time = CGFloat((CACurrentMediaTime() - startTime) / duration)
         
         // check to see if the animation has completed
         if time >= 1 {
-            for (index, constraint) in enumerate(constraints) {
+            for (index, constraint) in constraints.enumerated() {
                 constraint.constant = toConstants[index]
             }
             
             link.invalidate()
-            link.removeFromRunLoop(NSRunLoop.mainRunLoop(), forMode: NSRunLoopCommonModes)
+            link.remove(from: RunLoop.main, forMode: RunLoopMode.commonModes)
             
             if let completion = completion {
                 completion()
@@ -106,9 +106,9 @@ class LayoutConstraintAnimator: NSObject {
         }
         
         // process the animation
-        var t = easing.valueFor(CGFloat(time))
+        let t = easing.valueFor(t: CGFloat(time))
         
-        for (index, constraint) in enumerate(constraints) {
+        for (index, constraint) in constraints.enumerated() {
             constraint.constant = (1 - t) * fromConstants[index] + t * toConstants[index]
         }
     }

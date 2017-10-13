@@ -15,7 +15,7 @@ public class MotionStyleKit : NSObject {
     // MARK: - Cache
     private struct Cache {
         static var motion_Color: UIColor = UIColor(red: 0.000, green: 0.706, blue: 0.627, alpha: 1.000)
-        static var motion_DarkColor: UIColor = MotionStyleKit.motion_Color.colorWithBrightness(0.525)
+        static var motion_DarkColor: UIColor = MotionStyleKit.motion_Color.colorWithBrightness(newBrightness: 0.525)
     }
 
     // MARK: - Colors

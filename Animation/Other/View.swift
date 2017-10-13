@@ -13,7 +13,7 @@ This licensed material is licensed under the Apache 2.0 license. http://www.apac
         backgroundColor = MotionStyleKit.motion_Color
     }
     
-    override func drawRect(rect: CGRect) {
+    override func draw(_ rect: CGRect) {
         let rectanglePath = UIBezierPath(rect: rect)
         backgroundColor?.setFill()
         rectanglePath.fill()

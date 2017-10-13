@@ -44,7 +44,7 @@ class DropdownExampleViewController: ExampleNobelViewController, DropDownViewCon
         UIImage(named: "circle_x_06")!,
         UIImage(named: "circle_x_07")!
     ];
-    var reversedAnimationImages: [UIImage] { get { return reverse(animationImages) } }
+    var reversedAnimationImages: [UIImage] { get { return animationImages.reversed() } }
     
     var hiddenStatusBar:Bool = false {
         didSet {
@@ -65,12 +65,12 @@ class DropdownExampleViewController: ExampleNobelViewController, DropDownViewCon
         dropdownButtonImage.animationDuration = Double(self.animationImages.count) / 50.0;
         dropdownButtonImage.animationRepeatCount = 1;
     }
-    
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
-        dropdownVC = segue.destinationViewController as! DropdownViewController
+        dropdownVC = segue.destination as! DropdownViewController
         
-        dropdownVC.modalPresentationStyle = .Custom
+        dropdownVC.modalPresentationStyle = .custom
         dropdownVC.transitioningDelegate = dropdownTransitioningDelegate
         
         dropdownVC.dropdownPressed = {(index: Int) -> Void in
@@ -80,7 +80,7 @@ class DropdownExampleViewController: ExampleNobelViewController, DropDownViewCon
         hiddenStatusBar = false
         
         if segue.identifier == "embedSegue" {
-            let childViewController = segue.destinationViewController as! DropdownViewController
+            let childViewController = segue.destination as! DropdownViewController
             childViewController.delegate = self
         }
     }
@@ -89,18 +89,18 @@ class DropdownExampleViewController: ExampleNobelViewController, DropDownViewCon
     
     func show(completion: () -> Void) {
         dropdownButtonImage.animationImages = self.animationImages;
-        dropdownButtonImage.image = dropdownButtonImage.animationImages?.last as? UIImage
+        dropdownButtonImage.image = dropdownButtonImage.animationImages?.last
         dropdownButtonImage.startAnimating()
 
         let delay = dropdownButtonImage.animationDuration * Double(NSEC_PER_SEC)
-        var time = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
-        dispatch_after(time, dispatch_get_main_queue(), { () -> Void in
+        let time = DispatchTime.now() + delay
+        DispatchQueue.main.asyncAfter(deadline: time, execute: { () -> Void in
             self.dropdownButtonImage.stopAnimating()
         })
         
-        var animationDuration = Double(self.animationMultiplier) * 1 / 2.5;
+        let animationDuration = Double(self.animationMultiplier) * 1 / 2.5;
         
-        UIView.animateWithDuration(animationDuration, animations: { () -> Void in
+        UIView.animate(withDuration: animationDuration, animations: { () -> Void in
             self.backgroundView.alpha = 1
         })
         
@@ -108,18 +108,18 @@ class DropdownExampleViewController: ExampleNobelViewController, DropDownViewCon
     
     func hide(completion: () -> Void ) {
         dropdownButtonImage.animationImages = self.reversedAnimationImages
-        dropdownButtonImage.image = dropdownButtonImage.animationImages?.last as? UIImage
+        dropdownButtonImage.image = dropdownButtonImage.animationImages?.last
         dropdownButtonImage.startAnimating()
         
         let delay = dropdownButtonImage.animationDuration * Double(NSEC_PER_SEC)
-        var time = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
-        dispatch_after(time, dispatch_get_main_queue(), { () -> Void in
+        let time = DispatchTime.now() + delay
+        DispatchQueue.main.asyncAfter(deadline: time, execute: { () -> Void in
             self.dropdownButtonImage.stopAnimating()
         })
         
-        var animationDuration = Double(self.animationMultiplier) * 1 / 2.5;
+        let animationDuration = Double(self.animationMultiplier) * 1 / 2.5;
         
-        UIView.animateWithDuration(animationDuration, animations: { () -> Void in
+        UIView.animate(withDuration: animationDuration, animations: { () -> Void in
             self.backgroundView.alpha = 0
         })
         
@@ -127,19 +127,19 @@ class DropdownExampleViewController: ExampleNobelViewController, DropDownViewCon
     
     // MARK: - Actions
     
-    @IBAction func buttonAction(sender: AnyObject) {
+    @IBAction func buttonAction(_ sender: AnyObject) {
         dropdownVC.toggle()
         self.toggle()
     }
     
     func toggle() {
         if (isOpen) {
-            hide { () -> () in
+            hide {
                 false
             }
             isOpen = false
         } else {
-            show { () -> () in
+            show {
                 false
             }
             isOpen = true
@@ -154,16 +154,16 @@ class DropdownExampleViewController: ExampleNobelViewController, DropDownViewCon
     
     // MARK: - Appearance
     
-    override func preferredStatusBarUpdateAnimation() -> UIStatusBarAnimation {
-        return UIStatusBarAnimation.Fade
+    override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
+        return UIStatusBarAnimation.fade
     }
     
-    override func prefersStatusBarHidden() -> Bool {
+    override var prefersStatusBarHidden: Bool {
         return hiddenStatusBar
     }
     
-    override func preferredStatusBarStyle() -> UIStatusBarStyle {
-        return UIStatusBarStyle.LightContent
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return UIStatusBarStyle.lightContent
     }
     
     

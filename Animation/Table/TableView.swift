@@ -13,11 +13,11 @@ class TableView: UITableView {
     }
     
     override func awakeFromNib() {
-        registerNib(UINib(nibName: "TableViewCell", bundle: nil), forCellReuseIdentifier: "TableViewCellID")
+        register(UINib(nibName: "TableViewCell", bundle: nil), forCellReuseIdentifier: "TableViewCellID")
         
-        registerNib(UINib(nibName: "TableViewHeaderCell", bundle: nil), forCellReuseIdentifier: "TableViewHeaderCellID")
+        register(UINib(nibName: "TableViewHeaderCell", bundle: nil), forCellReuseIdentifier: "TableViewHeaderCellID")
         
-        self.separatorStyle = UITableViewCellSeparatorStyle.None
+        self.separatorStyle = UITableViewCellSeparatorStyle.none
     }
     
 }

@@ -57,9 +57,9 @@ class DropdownViewController: UIViewController, UITableViewDataSource, UITableVi
     ];
     
     var delegate:DropDownViewControllerDelegate?
-    var reversedAnimationImages: [UIImage] { get { return reverse(animationImages) } }
+    var reversedAnimationImages: [UIImage] { get { return animationImages.reversed() } }
     var tableHeight: CGFloat { get { return CGFloat(cellHeight * numberOfCells) } }
-    var dropdownPressed: ((index: Int) -> Void)?
+    var dropdownPressed: ((_ index: Int) -> Void)?
     var isOpen = false
     
     // MARK: - Lifecycle
@@ -67,9 +67,9 @@ class DropdownViewController: UIViewController, UITableViewDataSource, UITableVi
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        menuBackgroundWidth.constant = UIScreen.mainScreen().bounds.size.width
-        optionsTop.constant = -UIScreen.mainScreen().bounds.size.height
-        optionsBottom.constant = UIScreen.mainScreen().bounds.size.height
+        menuBackgroundWidth.constant = UIScreen.main.bounds.size.width
+        optionsTop.constant = -UIScreen.main.bounds.size.height
+        optionsBottom.constant = UIScreen.main.bounds.size.height
         
     }
     
@@ -79,18 +79,18 @@ class DropdownViewController: UIViewController, UITableViewDataSource, UITableVi
         let animationDuration = Double(self.animationMultiplier) * 1 / 2.5
         var dropdownBottom: CGFloat
         
-        if tableHeight < UIScreen.mainScreen().bounds.size.height {
+        if tableHeight < UIScreen.main.bounds.size.height {
             dropdownBottom =
-                UIScreen.mainScreen().bounds.size.height - tableHeight - separatorView.bounds.height
+                UIScreen.main.bounds.size.height - tableHeight - separatorView.bounds.height
         } else {
             dropdownBottom = 10
         }
         
         let easing = LayoutConstraintEasing.Bezier(x1: 0.5, y1: 0.08, x2: 0.0, y2: 1.0)
-        LayoutConstraintAnimator(constraint: self.optionsTop, delay: 0,
+        _ = LayoutConstraintAnimator(constraint: self.optionsTop, delay: 0,
             duration: animationDuration, toConstant: CGFloat(0), easing: easing,
             completion: nil)
-        LayoutConstraintAnimator(constraint: self.optionsBottom, delay: 0,
+        _ = LayoutConstraintAnimator(constraint: self.optionsBottom, delay: 0,
             duration: animationDuration, toConstant: dropdownBottom,
             easing: easing, completion: nil)
     }
@@ -98,21 +98,21 @@ class DropdownViewController: UIViewController, UITableViewDataSource, UITableVi
     func hide(completion: (() -> Void)?) {
         let animationDuration = Double(self.animationMultiplier) * 1 / 2.5
         let easing = LayoutConstraintEasing.Bezier(x1: 0.5, y1: 0.08, x2: 0.0, y2: 1.0)
-        let constant = UIScreen.mainScreen().bounds.size.height
+        let constant = UIScreen.main.bounds.size.height
         
-        LayoutConstraintAnimator(constraint: self.optionsTop, delay: 0,
+        _ = LayoutConstraintAnimator(constraint: self.optionsTop, delay: 0,
             duration: animationDuration, toConstant: -constant, easing: easing,
             completion: nil)
-        LayoutConstraintAnimator(constraint: self.optionsBottom, delay: 0,
+        _ = LayoutConstraintAnimator(constraint: self.optionsBottom, delay: 0,
             duration: animationDuration, toConstant: constant, easing: easing,
             completion: nil)
     }
     
     func toggle() {
         if (isOpen) {
-            self.hide(nil)
+            self.hide(completion: nil)
         } else {
-            self.show(nil)
+            self.show(completion: nil)
         }
         
         isOpen = !isOpen
@@ -120,13 +120,13 @@ class DropdownViewController: UIViewController, UITableViewDataSource, UITableVi
     
     // MARK: - Table View
 
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return numberOfCells
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        var cell = tableView.dequeueReusableCellWithIdentifier("DropdownOptionCell") as! DropdownOptionCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "DropdownOptionCell") as! DropdownOptionCell
         
         cell.label.text = "Option \(indexPath.row + 1)"
         
@@ -144,15 +144,15 @@ class DropdownViewController: UIViewController, UITableViewDataSource, UITableVi
         return cell;
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        tableView.deselectRowAtIndexPath(indexPath, animated: true)
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath as IndexPath, animated: true)
         self.toggle()
-        self.delegate?.dropDownViewControllerDidPressButton(self)
+        self.delegate?.dropDownViewControllerDidPressButton(viewController: self)
     }
     
     // MARK: - Appearance
     
-    override func prefersStatusBarHidden() -> Bool {
+    override var prefersStatusBarHidden: Bool {
         return true
     }
     

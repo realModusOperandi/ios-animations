@@ -34,9 +34,9 @@ class ModalExampleViewController: ExampleNobelViewController {
     
     // MARK: - Lifecycle
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        var modalVC = segue.destinationViewController as! ModalViewController
-        modalVC.modalPresentationStyle = .Custom
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let modalVC = segue.destination as! ModalViewController
+        modalVC.modalPresentationStyle = .custom
         modalVC.transitioningDelegate = modalTransitioningDelegate
         
         hiddenStatusBar = false
@@ -44,15 +44,15 @@ class ModalExampleViewController: ExampleNobelViewController {
     
     // MARK: - Appearance
     
-    override func preferredStatusBarUpdateAnimation() -> UIStatusBarAnimation {
-        return UIStatusBarAnimation.Fade
+    override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
+        return UIStatusBarAnimation.fade
     }
     
-    override func prefersStatusBarHidden() -> Bool {
+    override var prefersStatusBarHidden: Bool {
         return hiddenStatusBar
     }
     
-    override func preferredStatusBarStyle() -> UIStatusBarStyle {
-        return UIStatusBarStyle.LightContent
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return UIStatusBarStyle.lightContent
     }
 }

@@ -35,18 +35,18 @@ class MainViewController: UIViewController, UIScrollViewDelegate, UITableViewDat
     
     // MARK: - Scroll View
     
-    func scrollViewDidScroll(scrollView: UIScrollView) {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let scrollOffset = scrollView.contentOffset.y
         
-        let maxScrollOffset: CGFloat = 30
-        let alphaPercentage = (150 - (scrollOffset * 10)) / 150 * 2
+        let _: CGFloat = 30
+        _ = (150 - (scrollOffset * 10)) / 150 * 2
         
         if noteViewHeight == nil {
             noteViewHeight = noteViewHeightConstraint.constant
         }
         
-        let offsetToShowNote: CGFloat = -20
-        let offsetToHideNote: CGFloat = 15
+        let _: CGFloat = -20
+        let _: CGFloat = 15
     }
     
     // MARK: - Table View
@@ -55,7 +55,7 @@ class MainViewController: UIViewController, UIScrollViewDelegate, UITableViewDat
         return 1
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
             return 4
@@ -64,9 +64,9 @@ class MainViewController: UIViewController, UIScrollViewDelegate, UITableViewDat
         }
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("TableViewCellID") as! TableViewCell
-        cell.backgroundColor = UIColor.clearColor()
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "TableViewCellID") as! TableViewCell
+        cell.backgroundColor = UIColor.clear
         
         // Display text
         switch (indexPath.section, indexPath.row) {
@@ -85,24 +85,24 @@ class MainViewController: UIViewController, UIScrollViewDelegate, UITableViewDat
         return cell
     }
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 50
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // Row selected, view storyboard by ID
         switch (indexPath.section, indexPath.row) {
             case (0, 0):
-                showView("TabBar", viewControllerID: "TabBarControllerID")
+                showView(storyboard: "TabBar", viewControllerID: "TabBarControllerID")
             case (0, 1):
-                showView("Search", viewControllerID: "SearchNavigationControllerID")
+                showView(storyboard: "Search", viewControllerID: "SearchNavigationControllerID")
             case (0, 2):
-                showView("Modal", viewControllerID: "ModalNavigationControllerID")
+                showView(storyboard: "Modal", viewControllerID: "ModalNavigationControllerID")
             case (0, 3):
-                showView("Dropdown", viewControllerID: "DropdownViewControllerID")
+                showView(storyboard: "Dropdown", viewControllerID: "DropdownViewControllerID")
             default:break
         }
-        tableView.deselectRowAtIndexPath(indexPath, animated: false)
+        tableView.deselectRow(at: indexPath as IndexPath, animated: false)
     }
 
     // MARK: - Flow
@@ -111,11 +111,11 @@ class MainViewController: UIViewController, UIScrollViewDelegate, UITableViewDat
     // navigation controller.
     func showView(storyboard: String, viewControllerID: String) {
         let sb = UIStoryboard(name: storyboard, bundle: nil)
-        let vc = sb.instantiateViewControllerWithIdentifier(viewControllerID) as! UIViewController
+        let vc = sb.instantiateViewController(withIdentifier: viewControllerID)
         
         if vc is UINavigationController {
-            var nav = vc as! UINavigationController
-            var view = nav.viewControllers.first as! UIViewController
+            let nav = vc as! UINavigationController
+            let view = nav.viewControllers.first!
             self.navigationController?.pushViewController(view, animated: true)
         } else {
             self.navigationController?.pushViewController(vc, animated: true)
@@ -125,8 +125,8 @@ class MainViewController: UIViewController, UIScrollViewDelegate, UITableViewDat
     
     // MARK: - Appearance
     
-    override func preferredStatusBarStyle() -> UIStatusBarStyle {
-        return UIStatusBarStyle.LightContent
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return UIStatusBarStyle.lightContent
     }
     
 }

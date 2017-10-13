@@ -19,12 +19,12 @@ enum LayoutConstraintEasing {
     func valueFor(t: CGFloat) -> CGFloat {
         switch (self) {
             
-            case let .Linear: return t
-            case let .Bezier(x1, y1, x2, y2): return bezier(t, x1:x1, y1:y1, x2:x2, y2:y2)
+        case .Linear: return t
+        case .Bezier(let x1, let y1, let x2, let y2): return bezier(t: t, x1:x1, y1:y1, x2:x2, y2:y2)
         
-            case let .EaseInOut: return bezier(t, x1:easeInOutControlPoints[0], y1:easeInOutControlPoints[1], x2:easeInOutControlPoints[2], y2:easeInOutControlPoints[3])
-            case let .EaseIn: return bezier(t, x1:easeInOutControlPoints[1], y1:easeInOutControlPoints[0], x2:easeInOutControlPoints[2], y2:easeInOutControlPoints[3])
-            case let .EaseOut: return bezier(t, x1:easeInOutControlPoints[0], y1:easeInOutControlPoints[1], x2:easeInOutControlPoints[3], y2:easeInOutControlPoints[2])
+        case .EaseInOut: return bezier(t: t, x1:easeInOutControlPoints[0], y1:easeInOutControlPoints[1], x2:easeInOutControlPoints[2], y2:easeInOutControlPoints[3])
+        case .EaseIn: return bezier(t: t, x1:easeInOutControlPoints[1], y1:easeInOutControlPoints[0], x2:easeInOutControlPoints[2], y2:easeInOutControlPoints[3])
+        case .EaseOut: return bezier(t: t, x1:easeInOutControlPoints[0], y1:easeInOutControlPoints[1], x2:easeInOutControlPoints[3], y2:easeInOutControlPoints[2])
             
         }
     }
@@ -32,13 +32,13 @@ enum LayoutConstraintEasing {
     // Simple linear interpolation between two points
     func lerp(a:CGPoint, b:CGPoint, t:CGFloat) -> CGPoint
     {
-        return CGPointMake(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t);
+        return CGPoint(x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t);
     }
     
     func bezier(t: CGFloat, x1:CGFloat, y1:CGFloat, x2:CGFloat, y2:CGFloat) -> CGFloat {
         
         let cubicBezier = CubicBezier(x1: x1, y1: y1, x2: x2, y2: y2)
-        return cubicBezier.valueForX(t)
+        return cubicBezier.valueForX(x: t)
     }
     
     static var EaseInOutMTF : CAMediaTimingFunction {

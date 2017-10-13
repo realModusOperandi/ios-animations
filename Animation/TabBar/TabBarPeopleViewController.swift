@@ -14,9 +14,9 @@ class TabBarPeopleViewController: ExampleNobelViewController {
     
     // MARK: - Table View
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        var cell = super.tableView(tableView, cellForRowAtIndexPath: indexPath) as! TableViewCell
+        let cell = super.tableView(tableView, cellForRowAt: indexPath) as! TableViewCell
         
         cell.smallLabel.text = ""
         

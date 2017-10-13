@@ -21,25 +21,25 @@ class TabBarExampleAnimatedTransitioning: NSObject, UIViewControllerAnimatedTran
         super.init()
     }
     
-    func transitionDuration(transitionContext: UIViewControllerContextTransitioning) -> NSTimeInterval {
+    func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
         return 0.4
     }
     
-    func animateTransition(transitionContext: UIViewControllerContextTransitioning) {
+    func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
         
-        let to = transitionContext.viewControllerForKey(UITransitionContextToViewControllerKey)! as UIViewController
-        let from = transitionContext.viewControllerForKey(UITransitionContextFromViewControllerKey)! as UIViewController
+        let to = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.to)! as UIViewController
+        let from = transitionContext.viewController(forKey: UITransitionContextViewControllerKey.from)! as UIViewController
         
-        let container = transitionContext.containerView()
-        let duration = transitionDuration(transitionContext)
+        let container = transitionContext.containerView
+        _ = transitionDuration(using: transitionContext)
         
         container.addSubview(to.view)
         
-        var direction = toIndex > fromIndex ? CGFloat(-1) : CGFloat(1)
+        _ = toIndex > fromIndex ? CGFloat(-1) : CGFloat(1)
 
-        if let toPeople = to as? TabBarPeopleViewController {
-            to.view.transform = CGAffineTransformMakeTranslation(0, to.view.bounds.height)
-        } else if let fromPeople = from as? TabBarPeopleViewController {
+        if to is TabBarPeopleViewController {
+            to.view.transform = CGAffineTransform(translationX: 0, y: to.view.bounds.height)
+        } else if from is TabBarPeopleViewController {
             to.view.alpha = 1.0
             container.addSubview(from.view)
         } else {
@@ -47,20 +47,20 @@ class TabBarExampleAnimatedTransitioning: NSObject, UIViewControllerAnimatedTran
             to.view.alpha = 0.0
         }
         
-        UIView.animateWithDuration(animMultiplier * transitionDuration(transitionContext), delay: animMultiplier * 0.0, options: nil, animations: { () -> Void in
+        UIView.animate(withDuration: animMultiplier * transitionDuration(using: transitionContext), delay: animMultiplier * 0.0, options: [], animations: { () -> Void in
             
             to.view.alpha = 1.0
-            to.view.transform = CGAffineTransformIdentity
+            to.view.transform = CGAffineTransform.identity
             
             if let fromPeople = from as? TabBarPeopleViewController {
-                fromPeople.view.transform = CGAffineTransformMakeTranslation(0, from.view.bounds.height)
+                fromPeople.view.transform = CGAffineTransform(translationX: 0, y: from.view.bounds.height)
             }
             
         }) { finished in
             
-            to.view.transform = CGAffineTransformIdentity
-            from.view.transform = CGAffineTransformIdentity
-            transitionContext.completeTransition(!transitionContext.transitionWasCancelled())
+            to.view.transform = CGAffineTransform.identity
+            from.view.transform = CGAffineTransform.identity
+            transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
             
         }
     }

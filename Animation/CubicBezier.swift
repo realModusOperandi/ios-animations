@@ -12,10 +12,10 @@ class CubicBezier: NSObject {
     
     init(x1: CGFloat, y1: CGFloat, x2: CGFloat, y2: CGFloat) {
         
-        let normalizedPoint = CGPointZero;
+        _ = CGPoint.zero;
         
-        var p1 = CGPointZero
-        var p2 = CGPointZero
+        var p1 = CGPoint.zero
+        var p2 = CGPoint.zero
         
         // Clamp to interval [0..1]
         p1.x = max(0.0, min(1.0, x1))
@@ -37,8 +37,8 @@ class CubicBezier: NSObject {
     func valueForX(x: CGFloat) -> CGFloat {
         
         let epsilon: CGFloat = 1.0 / 200.0
-        let xSolved = solveCurveX(x, epsilon: epsilon)
-        let y = sampleCurveY(xSolved)
+        let xSolved = solveCurveX(x: x, epsilon: epsilon)
+        let y = sampleCurveY(t: xSolved)
         return y;
     }
     
@@ -46,15 +46,16 @@ class CubicBezier: NSObject {
         
         var t0: CGFloat, t1: CGFloat, t2: CGFloat, x2: CGFloat, d2: CGFloat
         
-        var i: Int = 0;
+        var _: Int = 0;
         
         // First try a few iterations of Newton's method -- normally very fast.
-        for (t2 = x, i = 0; i < 8; i++) {
-            x2 = sampleCurveX(t2) - x
+        t2 = x
+        for _ in 0..<8 {
+            x2 = sampleCurveX(t: t2) - x
             if (fabs(x2) < epsilon) {
                 return t2;
             }
-            d2 = sampleCurveDerivativeX(t2)
+            d2 = sampleCurveDerivativeX(t: t2)
             if (fabs(d2) < 1e-6) {
                 break;
             }
@@ -74,7 +75,7 @@ class CubicBezier: NSObject {
         }
         
         while (t0 < t1) {
-            x2 = sampleCurveX(t2)
+            x2 = sampleCurveX(t: t2)
             if (fabs(x2 - x) < epsilon) {
                 return t2;
             }

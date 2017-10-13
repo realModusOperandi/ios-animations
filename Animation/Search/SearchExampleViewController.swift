@@ -55,47 +55,47 @@ class SearchExampleViewController: ExampleNobelViewController, UITextFieldDelega
         
         searchFieldBackground.backgroundColor = UIColor(white: 0.957, alpha: 1)
         
-        tableView.hidden = true
-        resultsView.hidden = true
-        xButton.hidden = true
+        tableView.isHidden = true
+        resultsView.isHidden = true
+        xButton.isHidden = true
         
         self.prepareLoader()
-        self.searchField.addTarget(self, action: "textChanged", forControlEvents: .EditingChanged)
+        self.searchField.addTarget(self, action: #selector(SearchExampleViewController.textChanged), for: .editingChanged)
     }
     
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        let tapRecognizer = UITapGestureRecognizer(target: self, action: "handleSingleTap:")
+        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(SearchExampleViewController.handleSingleTap(_:)))
         tapRecognizer.numberOfTapsRequired = 1
         self.view.addGestureRecognizer(tapRecognizer)
     }
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         searchField.resignFirstResponder()
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: nil)
     }
     
     func prepareLoader() -> Void {
         loader.animationImages = [UIImage]()
         
         // grabs the animation frames from the bundle
-        for var index = 100; index < 147; index++ {
-            var frameName = String(format: "Loader_00%03d", index)
+        for index in 100..<147 {
+            let frameName = String(format: "Loader_00%03d", index)
             loader.animationImages?.append(UIImage(named:frameName)!)
         }
         
         loader.animationDuration = 1.5
         loader.stopAnimating()
-        loader.hidden = true
+        loader.isHidden = true
     }
     
     // MARK: - Actions
     
-    @IBAction func xPressed(sender: AnyObject) {
+    @IBAction func xPressed(_ sender: AnyObject) {
         self.searchField.text = ""
-        self.xButton.hidden = true
+        self.xButton.isHidden = true
         textFieldDidBeginEditing(searchField)
     }
     
@@ -105,14 +105,14 @@ class SearchExampleViewController: ExampleNobelViewController, UITextFieldDelega
      * Starts the animation after the enter/submit button has been pressed
      */
     func search(text: String) {
-        showResults(text)
+        showResults(results: text)
     }
     
     /**
      * Gesture recognizer which will hide the keyboard when the user clicks
      * outside of the search textfield.
      */
-    func handleSingleTap(recognizer: UITapGestureRecognizer) {
+    @objc func handleSingleTap(_ recognizer: UITapGestureRecognizer) {
         expandHeader()
         hideResults()
     }
@@ -125,7 +125,7 @@ class SearchExampleViewController: ExampleNobelViewController, UITextFieldDelega
     func showResults(results: String) {
         resultsLabel.text = results
         disciplineLabel.text = ""
-        resultsView.hidden = false
+        resultsView.isHidden = false
         
         // 1. set animation to initial state
         self.resultsViewLeft.constant = 0
@@ -136,35 +136,35 @@ class SearchExampleViewController: ExampleNobelViewController, UITextFieldDelega
         
         loader.alpha = 0
         loader.startAnimating()
-        loader.hidden = false
+        loader.isHidden = false
         
         // 2. show indeterminate loader
-        UIView.animateWithDuration(0.25, animations: { () -> Void in
+        UIView.animate(withDuration: 0.25, animations: { () -> Void in
             self.loader.alpha = 1
         }, completion: nil)
         
         // 3. hide loader
-        let animationDuration = NSTimeInterval(animMultiplier) * 0.15
-        let options = UIViewAnimationOptions.CurveEaseInOut
-        UIView.animateWithDuration(animationDuration, delay: 1.5,
+        let animationDuration = TimeInterval(animMultiplier) * 0.15
+        let options: UIViewAnimationOptions = []
+        UIView.animate(withDuration: animationDuration, delay: 1.5,
             options: options, animations: {
             self.loader.alpha = 0
         }, completion: { finished in
                 
             // 4a. cleanup loader
             self.loader.stopAnimating()
-            self.loader.hidden = true
+            self.loader.isHidden = true
             
             // 4b. zoom in the results view
-            ViewAnimator.animateView(self.resultsView,
+            ViewAnimator.animateView(view: self.resultsView,
                 withDuration: 0.25,
                 andEasingFunction: LayoutConstraintEasing.EaseInOutMTF,
                 toTransform: CATransform3DIdentity)
             
             // 4c. fade in the results view
-            UIView.animateWithDuration(0.25, animations: { () -> Void in
+            UIView.animate(withDuration: 0.25, animations: { () -> Void in
                 self.resultsView.alpha = 1
-                self.resultsView.transform = CGAffineTransformIdentity
+                self.resultsView.transform = CGAffineTransform.identity
             }, completion: nil)
         })
         
@@ -176,10 +176,10 @@ class SearchExampleViewController: ExampleNobelViewController, UITextFieldDelega
      */
     func hideResults() -> Void {
         let animationDuration: Double = Double(animMultiplier * 0.3)
-        let animationDelay: NSTimeInterval = 0
+        let animationDelay: TimeInterval = 0
 
-        UIView.animateWithDuration(animationDuration, delay: animationDelay,
-            options: nil, animations: { () -> Void in
+        UIView.animate(withDuration: animationDuration, delay: animationDelay,
+            options: [], animations: { () -> Void in
             self.itemsView.alpha = 1.0
             self.tableView.alpha = 1.0
         }, completion: nil)
@@ -192,17 +192,17 @@ class SearchExampleViewController: ExampleNobelViewController, UITextFieldDelega
             searchIconTop, searchFieldHeight, searchTitleBottom
         ]
         let toValues: [CGFloat] = [30, 40, 0]
-        let animationDuration: NSTimeInterval = Double(animMultiplier * 0.2)
+        let animationDuration: TimeInterval = Double(animMultiplier * 0.2)
         
-        LayoutConstraintAnimator(constraints: constraintsToAnimate, delay: 0,
+        _ = LayoutConstraintAnimator(constraints: constraintsToAnimate, delay: 0,
             duration: animationDuration, toConstants: toValues,
             easing: LayoutConstraintEasing.EaseInOut, completion: nil)
         
-        UIView.animateWithDuration(Double(animMultiplier) * 0.2, animations: { () -> Void in
-            self.searchTitleLabel.transform = CGAffineTransformMakeScale(0.75, 0.75)
+        UIView.animate(withDuration: Double(animMultiplier) * 0.2, animations: { () -> Void in
+            self.searchTitleLabel.transform = CGAffineTransform(scaleX: 0.75, y: 0.75)
         })
         
-        UIView.animateWithDuration(Double(animMultiplier) * 0.3, animations: { () -> Void in
+        UIView.animate(withDuration: Double(animMultiplier) * 0.3, animations: { () -> Void in
             self.tableView.alpha = 0.2
             self.itemsView.alpha = 0.2
         })
@@ -214,55 +214,55 @@ class SearchExampleViewController: ExampleNobelViewController, UITextFieldDelega
         ]
         let toValues: [CGFloat] = [70, 80, 18]
         let animationDuration: Double = Double(animMultiplier * 0.3)
-        let animationDelay: NSTimeInterval = 0
         
-        LayoutConstraintAnimator(constraints: constraintsToAnimate,
+        _ = LayoutConstraintAnimator(constraints: constraintsToAnimate,
             delay: 0, duration: animationDuration, toConstants: toValues,
             easing: LayoutConstraintEasing.EaseInOut, completion: nil)
         
-        UIView.animateWithDuration(Double(self.animMultiplier) * 0.3, animations: { () -> Void in
-            self.searchTitleLabel.transform = CGAffineTransformIdentity
+        UIView.animate(withDuration: Double(self.animMultiplier) * 0.3, animations: { () -> Void in
+            self.searchTitleLabel.transform = CGAffineTransform.identity
         })
         
-        xButton.hidden = true
+        xButton.isHidden = true
         
         let delay = Double(animMultiplier) * 0.1 * Double(NSEC_PER_SEC)
-        let time = dispatch_time(DISPATCH_TIME_NOW, Int64(delay))
+        let time = DispatchTime.now() + delay
+        //let time = dispatch_time(dispatch_time_t(DISPATCH_TIME_NOW), Int64(delay))
         
-        dispatch_after(time, dispatch_get_main_queue(), { () -> Void in
+        DispatchQueue.main.asyncAfter(deadline: time, execute: { () -> Void in
             self.searchField.resignFirstResponder()
         })
     }
     
     // MARK: - Appearance
     
-    override func preferredStatusBarStyle() -> UIStatusBarStyle {
-        return UIStatusBarStyle.LightContent
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return UIStatusBarStyle.lightContent
     }
     
     // MARK: - Text Field
     
-    func textChanged() -> Void {
-        self.xButton.hidden = count(self.searchField.text) == 0
+    @objc func textChanged() -> Void {
+        self.xButton.isHidden = self.searchField.text?.characters.count == 0
     }
     
-    func textFieldDidBeginEditing(textField: UITextField) {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
         self.collapseHeader()
         
-        self.xButton.hidden = count(textField.text) == 0
+        self.xButton.isHidden = textField.text?.count == 0
     }
     
-    func textFieldShouldReturn(textField: UITextField) -> Bool {
-        if count(textField.text) < 2 {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        guard let text = textField.text, text.count >= 2 else {
             return false
         }
         
-        search(textField.text)
+        search(text: text)
         
         return true
     }
     
-    func textFieldShouldClear(textField: UITextField) -> Bool {
+    func textFieldShouldClear(_ textField: UITextField) -> Bool {
         return true
     }
 }
